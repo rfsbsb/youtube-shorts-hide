@@ -2,11 +2,10 @@ function hideShorts() {
   // Find all Shorts links on the page
   var shorts = [...document.querySelectorAll('.shortsLockupViewModelHostEndpoint')];
 
-  var counter = 0;
+  var len = shorts.length;
 
-  for (var s of shorts) {
-    hideElement(s, counter);
-    counter++;
+  for (var i = 0; i < len; i++) {
+    hideElement(shorts[i], i);
   }
 }
 
