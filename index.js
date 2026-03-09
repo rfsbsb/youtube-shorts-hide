@@ -15,12 +15,14 @@ function hideElement(s, index) {
     if (n && n.classList.contains('shortsLockupViewModelHostOutsideMetadata')) {
         var hm = n.querySelector('.shortsLockupViewModelHostOutsideMetadataMenu button')
         hm.click()
-        var context = document.querySelector('.ytContextualSheetLayoutContentContainer');
-        if (context) {
-          var hideButton = context.querySelectorAll('.yt-list-item-view-model')[1];
-          console.log(s)
-          hideButton.click()
-        }
+        setTimeout(() => { 
+          var context = document.querySelector('.ytContextualSheetLayoutContentContainer');
+          if (context) {
+            var hideButton = context.querySelectorAll('.yt-list-item-view-model')[1];
+            console.log(s)
+            hideButton.click()
+          }
+        }, 300); 
     }
   }, 100 * index);
 }
