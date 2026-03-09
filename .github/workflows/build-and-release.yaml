@@ -2,8 +2,8 @@ name: Build Bookmarklet
 
 on:
   push:
-    branches:
-      - 'main'
+    tags:
+      - 'v*'
 
 jobs:
   build:
