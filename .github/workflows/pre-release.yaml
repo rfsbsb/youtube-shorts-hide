@@ -46,8 +46,8 @@ jobs:
           PATCH=$((PATCH + 1))
         fi
         
-        # Create pre-release tag
-        NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}-draft.${GITHUB_SHA::7}"
+        # Create version tag
+        NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
         echo "New version: $NEW_VERSION"
         echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
     
@@ -67,7 +67,6 @@ jobs:
           });
           
           let draftRelease = releases.find(r => r.draft === true);
-          let newVersionTag = newVersion.replace(/-[a-zA-Z-\d\.]*\.\d*/, '');
           
           if (draftRelease) {
             // Draft already exists, update it with new version tag
@@ -92,8 +91,8 @@ jobs:
             await github.rest.repos.createRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              tag_name: newVersionTag,
-              name: `Release ${newVersionTag}`,
+              tag_name: newVersion,
+              name: `Release ${newVersion}`,
               draft: true,
               generate_release_notes: true,
             });
