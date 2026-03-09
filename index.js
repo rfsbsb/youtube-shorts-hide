@@ -22,9 +22,9 @@ function hideElement(s, index) {
             console.log(s)
             hideButton.click()
           }
-        }, 100 * index); 
+        }, 10 * index); 
     }
-  }, 100 * index);
+  }, 25 * index);
 }
 
 hideShorts()
