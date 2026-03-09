@@ -22,7 +22,7 @@ function hideElement(s, index) {
             console.log(s)
             hideButton.click()
           }
-        }, 300); 
+        }, 100 * index); 
     }
   }, 100 * index);
 }
