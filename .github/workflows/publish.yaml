@@ -1,0 +1,68 @@
+name: Publish Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build-and-attach:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        ref: main
+    
+    - name: Convert JS to Bookmarklet
+      run: |
+        cat script.js | sed 's|//.*$||g' | tr -d '\n' | sed 's/  */ /g' | sed 's/^ //g' | sed 's/ $//g' | sed 's/^/javascript:(function(){/' | sed 's/$/})();/' > inline.js
+    
+    - name: Verify Build
+      run: |
+        echo "Built bookmarklet:"
+        cat inline.js
+        echo ""
+        echo "Size: $(wc -c < inline.js) bytes"
+    
+    - name: Attach Asset to Release
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          
+          // Get the release that triggered this workflow
+          const release = context.payload.release;
+          console.log(`Publishing release: ${release.name} (${release.tag_name})`);
+          
+          // Delete old inline.js asset if exists (cleanup from draft)
+          const { data: assets } = await github.rest.repos.listReleaseAssets({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            release_id: release.id,
+          });
+          
+          for (const asset of assets) {
+            if (asset.name === 'inline.js') {
+              console.log('Removing old asset...');
+              await github.rest.repos.deleteReleaseAsset({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                asset_id: asset.id,
+              });
+            }
+          }
+          
+          // Upload fresh build
+          console.log('Uploading fresh build of inline.js...');
+          const fileContent = fs.readFileSync('inline.js');
+          await github.rest.repos.uploadReleaseAsset({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            release_id: release.id,
+            name: 'inline.js',
+            data: fileContent,
+          });
+          
+          console.log('✅ Release asset successfully attached!');
